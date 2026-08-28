@@ -18,7 +18,7 @@ import os
 import ee
 
 # ── CONFIG ──────────────────────────────────────────────────────────
-PROJECT_ID = "ee-jjgarcia1906"   # tu proyecto GEE
+PROJECT_ID = "jjgarcia1906"   # tu proyecto GEE
 COLLECTION = "COPERNICUS/S2_SR_HARMONIZED"
 
 import streamlit as st
@@ -112,24 +112,39 @@ st.caption("Miniaturas renderizadas en la nube de GEE → instantáneo. Copia el
 
 @st.cache_resource
 def iniciar_gee():
-    # 1) Si hay service account en secrets (Streamlit Cloud), usar credenciales
-    gaa = st.secrets.get("GEE_SERVICE_ACCOUNT") or st.secrets.get("gee_service_account") or ""
-    gkey = st.secrets.get("GEE_PRIVATE_KEY") or st.secrets.get("gee_private_key") or ""
-    proj = st.secrets.get("GEE_PROJECT") or st.secrets.get("gee_project") or "ee-jjgarcia1906"
-    if gaa and gkey:
-        import json as _j, tempfile
-        d = {"type": "service_account",
-             "client_email": gaa,
-             "private_key": (gkey.replace("\\n", "\n")),
-             "token_uri": "https://oauth2.googleapis.com/token"}
-        p = os.path.join(tempfile.gettempdir(), "gee_sa.json")
-        with open(p, "w") as f:
-            _j.dump(d, f)
-        creds = ee.ServiceAccountCredentials(gaa, p)
+    import json as _j
+    proj = "jjgarcia1906"
+
+    # 1) Service account JSON file (VPS deployment)
+    sa_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gee_sa.json")
+    if os.path.exists(sa_path):
+        with open(sa_path) as f:
+            sa = _j.load(f)
+        creds = ee.ServiceAccountCredentials(sa["client_email"], sa_path)
         ee.Initialize(creds, project=proj)
-    else:
-        # 2) fallback: credenciales locales existentes
-        ee.Initialize(project=proj)
+        return True
+
+    # 2) Streamlit secrets (Streamlit Cloud)
+    try:
+        gaa = st.secrets.get("GEE_SERVICE_ACCOUNT") or st.secrets.get("gee_service_account") or ""
+        gkey = st.secrets.get("GEE_PRIVATE_KEY") or st.secrets.get("gee_private_key") or ""
+        if gaa and gkey:
+            import tempfile
+            d = {"type": "service_account",
+                 "client_email": gaa,
+                 "private_key": (gkey.replace("\\n", "\n")),
+                 "token_uri": "https://oauth2.googleapis.com/token"}
+            p = os.path.join(tempfile.gettempdir(), "gee_sa.json")
+            with open(p, "w") as f:
+                _j.dump(d, f)
+            creds = ee.ServiceAccountCredentials(gaa, p)
+            ee.Initialize(creds, project=proj)
+            return True
+    except Exception:
+        pass
+
+    # 3) Fallback: local credentials
+    ee.Initialize(project=proj)
     return True
 
 
