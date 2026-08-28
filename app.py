@@ -179,7 +179,7 @@ else:
     buffer_m = st.number_input("Buffer exterior (m)", value=50, min_value=0, max_value=2000)
     if archivo is not None:
         import json as _json
-        gj = _json.load(archivo.read())
+        gj = _json.loads(archivo.read())
         # extraer todas las coords de polygons/multipolygons
         import sys
         coords = []
