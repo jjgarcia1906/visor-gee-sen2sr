@@ -22,7 +22,7 @@ PROJECT_ID = "jjgarcia1906"   # tu proyecto GEE
 COLLECTION = "COPERNICUS/S2_SR_HARMONIZED"
 
 import streamlit as st
-st.set_page_config(page_title="🛰️ Visor GEE Sentinel-2", layout="wide")
+st.set_page_config(page_title="🛰️ Buscador de Escenas Sentinel-2", layout="wide")
 
 # ══════════════════════════════════════════════
 #  TEMA VISUAL (celeste + verde oscuro) — igual que la app SEN2SR
@@ -106,8 +106,11 @@ div[class*="stMarkdown"] div div {
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🛰️ Visor rápido de escenas — Google Earth Engine")
-st.caption("Miniaturas renderizadas en la nube de GEE → instantáneo. Copia el ID y pégalo en la app SEN2SR.")
+st.title("🛰️ Buscador de Escenas Sentinel-2")
+st.markdown("""Busca y visualiza escenas del satélite **Sentinel-2** (Copernicus) usando **Google Earth Engine**. Sube coordenadas, UTM o un archivo GeoJSON y obtén miniaturas instantáneas con metadatos (fecha, nubes, granulo MGRS). Copia el ID de la escena y pégalo en la app SEN2SR para procesarla.
+
+*Desarrollado por: Ing. Jordi García (CIP 206128) — [CartoPro-Web](https://www.gfmap.org)*""", unsafe_allow_html=True)
+
 
 
 @st.cache_resource
