@@ -286,3 +286,6 @@ else:
         st.info("Define la zona y pulsa el botón.")
 
 st.caption("\n\nConsejo: pega el ID gris de una tarjeta en la app SEN2SR (campo 'ID de escena') para super-resolver ESA escena.")
+
+st.markdown('---')
+st.caption('© 2026 CartoPro-Web — Ing. Jordi García (CIP 206128). Todos los derechos reservados.')
